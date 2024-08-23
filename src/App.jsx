@@ -17,17 +17,42 @@ const App = () => {
   }
   
   useEffect(()=>{
-    const count = ()=> {
-      setPendingRecCount( allPendingRecords ? allPendingRecords.length : 0);
+    const count = async ()=> {
+      const config = {
+        appName: "smart-joules-app",
+        reportName: "Maintenance_Scheduler_Report",
+        criteria: `Status == "Pending" && Start_Date >= "01-Jul-2024" && Start_Date <= "31-Jul-2024"`
+      }
+      try {
+        await ZOHO.CREATOR.init();
+        const response = await ZOHO.CREATOR.API.getRecordCount(config);
+        setPendingRecCount(parseInt(response.result.records_count));
+      }
+      catch (err) {
+        console.log(err);
+      }
     }
     count();
-  },[allPendingRecords]);
-  useEffect(()=>{
-    const count = ()=> {
-      setCompletedRecCount( allCompletedRecords ? allCompletedRecords.length : 0);
+  },[]);
+
+  useEffect(()=> {
+    const count = async ()=> {
+      const config = {
+        appName: "smart-joules-app",
+        reportName: "Maintenance_Scheduler_Report",
+        criteria: `Status == "Completed" && Start_Date >= "01-Jul-2024" && Start_Date <= "31-Jul-2024"`
+      }
+      try {
+        await ZOHO.CREATOR.init();
+        const response = await ZOHO.CREATOR.API.getRecordCount(config);
+        setCompletedRecCount(parseInt(response.result.records_count));
+      }
+      catch (err) {
+        console.log(err);
+      }
     }
     count();
-  },[allCompletedRecords]);
+  })
 
   const updateTab = (status) => {
     setActiveTab(status);
