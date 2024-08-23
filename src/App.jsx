@@ -9,15 +9,48 @@ const App = () => {
   const [allPendingRecords, setAllPendingRecords] = useState([]);
   const [allCompletedRecords, setAllCompletedRecords] = useState([]);
   const [pendingRecCount, setPendingRecCount] = useState(0);
-  const [completedRecCount,setCompletedRecCount] = useState(0);
-  const [areaText,setAreaText] = useState("");
+  const [completedRecCount, setCompletedRecCount] = useState(0);
+  const [areaText, setAreaText] = useState("");
+  const [activityID, setActivityID] = useState(0);
+  const [pendingTask, setPendingTask] = useState([]);
+  const [completedTask, setCompletedTask] = useState([]);
 
-  const areaFilter = (event)=>{
+  const areaFilter = (event) => {
     setAreaText(event.target.value);
   }
-  
-  useEffect(()=>{
-    const count = async ()=> {
+
+  const createTaskList = (id) => {
+    setActivityID(id);
+  }
+
+
+  useEffect(() => {
+    const fetchRecords = async () => {
+      const config = {
+        appName: "smart-joules-app",
+        reportName: "All_Maintenance_Scheduler_Task_List_Records",
+        criteria: `Maintenance_ID == ${activityID}`
+      }
+
+      await ZOHO.CREATOR.init();
+      try {
+        const response = await ZOHO.CREATOR.API.getAllRecords(config);
+        const data = response.data;
+        const pending_records = data.filter(record => record.Status == "Pending");
+        const completed_records = data.filter(record => record.Status == "Completed");
+        setPendingTask(pending_records);
+        setCompletedTask(completed_records);
+      }
+      catch (err) {
+
+      }
+    }
+    fetchRecords();
+  }, [activityID]);
+
+
+  useEffect(() => {
+    const count = async () => {
       const config = {
         appName: "smart-joules-app",
         reportName: "Maintenance_Scheduler_Report",
@@ -33,10 +66,10 @@ const App = () => {
       }
     }
     count();
-  },[]);
+  }, []);
 
-  useEffect(()=> {
-    const count = async ()=> {
+  useEffect(() => {
+    const count = async () => {
       const config = {
         appName: "smart-joules-app",
         reportName: "Maintenance_Scheduler_Report",
@@ -160,7 +193,9 @@ const App = () => {
                         area={record.Area}
                         title={record.Title}
                         progress={record.Progress}
-                        date={record.Start_Date} />
+                        actID={record.ID}
+                        date={record.Start_Date}
+                        fetchID={createTaskList} />
                     ))
                   ) : (
                     <div className='text-center'>No Records Found</div>
@@ -169,27 +204,29 @@ const App = () => {
               </div>
               <div className={`card-list overflow-x-hidden ${activeTab === "Completed" ? 'd-block' : 'd-none'}`}>
                 <Suspense fallback={<div>Loading...</div>}>
-                {allCompletedRecords && allCompletedRecords.length > 0 ? (
-                  allCompletedRecords.filter(record => {
-                    return (
-                      record.Site_Name.display_value.toLowerCase().includes(areaText.toLowerCase) ||
-                      record.Title.toLowerCase().includes(areaText.toLowerCase()) ||
-                      record.Area.toLowerCase().includes(areaText.toLowerCase())
-                    )
-                  }).map((record, index) => (
-                    <Activitycard
-                      key={index}
-                      onIncrement={setListDisplayType}
-                      cardType="activity"
-                      site_name={record.Site_Name.Site_Name}
-                      area={record.Area}
-                      title={record.Title}
-                      progress={record.Progress}
-                      date={record.Start_Date} />
-                  ))
-                ) : (
-                  <div className='text-center'>No Records Found</div>
-                )}
+                  {allCompletedRecords && allCompletedRecords.length > 0 ? (
+                    allCompletedRecords.filter(record => {
+                      return (
+                        record.Site_Name.display_value.toLowerCase().includes(areaText.toLowerCase) ||
+                        record.Title.toLowerCase().includes(areaText.toLowerCase()) ||
+                        record.Area.toLowerCase().includes(areaText.toLowerCase())
+                      )
+                    }).map((record, index) => (
+                      <Activitycard
+                        key={index}
+                        onIncrement={setListDisplayType}
+                        cardType="activity"
+                        site_name={record.Site_Name.Site_Name}
+                        area={record.Area}
+                        title={record.Title}
+                        progress={record.Progress}
+                        actID={record.ID}
+                        date={record.Start_Date}
+                        fetchID={createTaskList} />
+                    ))
+                  ) : (
+                    <div className='text-center'>No Records Found</div>
+                  )}
                 </Suspense>
               </div>
             </div>
@@ -203,11 +240,24 @@ const App = () => {
             </div>
             <div className={`card-list overflow-x-hidden ${activeTab === "Pending" ? 'd-block' : 'd-none'}`}>
               <div className='text-end p-2'><button className='btn btn-danger btn-sm shadow-sm' onClick={backToActivity}>Back</button></div>
-              <Taskcard />
+              {
+                pendingTask.map((record,index) => (
+                  <Taskcard 
+                  key={index}
+                  task_name={record.Task_Name}/>
+                ))
+              }
             </div>
             <div className={`card-list overflow-x-hidden ${activeTab === "Completed" ? 'd-block' : 'd-none'}`}>
               <div className='text-end p-2'><button className='btn btn-danger btn-sm shadow-sm' onClick={backToActivity}>Back</button></div>
-              <Taskcard />
+              {
+                completedTask.map((record,index) => {
+                  <Taskcard
+                  key={index}
+                  task_name={record.Task_Name}
+                  />
+                })
+              }
             </div>
           </div>
         )}

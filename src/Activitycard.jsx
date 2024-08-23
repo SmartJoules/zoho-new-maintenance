@@ -1,8 +1,9 @@
 import React from 'react'
-const Activitycard = ({ onIncrement, site_name, area, title, progress, date }) => {
+const Activitycard = ({ onIncrement, site_name, area, title, progress, actID, date, fetchID }) => {
 
   const handleClick = () => {
     onIncrement(true);
+    fetchID(actID);
   }
   return (
     <>
