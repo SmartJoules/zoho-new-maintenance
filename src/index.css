@@ -1,51 +1,62 @@
-.container-fluid{
+.container-fluid {
     height: 100vh;
     overflow-y: hidden;
+    font-family: "Poppins", sans-serif;
+}
+
+.bg-warning {
+    background: #c11 !important;
+}
+
+.text-warning {
+    color: #c11 !important;
+}
+
+.nav .active {
+    color: #272626;
+    font-weight: bold;
+    border-bottom: 2px solid #c11;
+    transition: 0.2s ease;
+}
+
+.nav a {
+    color: #5a5a5a;
+    cursor: pointer;
+}
+
+.w-60 {
+    width: 60% !important;
+}
+
+.w-40 {
+    width: 40% !important;
+}
+
+.card-list {
+    height: max-content;
+    overflow-y: auto;
+}
+
+.fw-600 {
+    font-weight: 600;
+}
+
+::-webkit-scrollbar {
+    width: 1px;
+}
+
+@media (width <=512px) {
+    .card-list .card .card-body {
+        font-size: 12px;
     }
-    
-    .bg-warning{
-        background: #c11 !important;
+
+    .card-list .card .card-body button {
+        font-size: 10px;
     }
-    
-    .text-warning{
-        color: #c11 !important;
+
+    .fs-10 {
+        font-size: 10px;
     }
-    
-    .nav .active{
-        color: #272626;
-        font-weight: bold;
-        border-bottom: 2px solid #c11;
-        transition: 0.2s ease;
-    }
-    
-    .nav a {
-        color: #5a5a5a;
-        cursor: pointer;
-    }
-    .w-60{
-        width: 60% !important;
-    }
-    .w-40{
-        width: 40% !important;
-    }
-    .card-list{
-        height: max-content;
-        overflow-y: auto;
-    }
-    
-    .fw-600{
-        font-weight: 600;
-    }
-    ::-webkit-scrollbar{
-        width: 1px;
-    }
-    
-    @media (width <= 512px) {
-        .card-list .card .card-body{
-            font-size: 14px;
-        }
-        .card-list .card .card-body button{
-            font-size: 14px;
-        }
-    
-    }
+
+
+}
