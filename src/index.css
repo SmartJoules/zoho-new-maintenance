@@ -1,6 +1,6 @@
 .container-fluid {
     height: 100vh;
-    overflow-y: hidden;
+    overflow: hidden;
     font-family: "Poppins", sans-serif;
 }
 
@@ -32,10 +32,6 @@
     width: 40% !important;
 }
 
-.card-list {
-    height: max-content;
-    overflow-y: auto;
-}
 
 .fw-600 {
     font-weight: 600;
@@ -44,6 +40,18 @@
 ::-webkit-scrollbar {
     width: 1px;
 }
+.zpelement-wrapper{
+height: 100vh;
+}
+
+  .custom-date-input::-webkit-calendar-picker-indicator {
+    filter: invert(50%);
+  }
+  
+  .custom-date-input:focus {
+    border-color: #007BFF;
+    background: black;
+  }
 
 @media (width <=512px) {
     .card-list .card .card-body {

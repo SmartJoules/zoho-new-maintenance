@@ -2,6 +2,7 @@ import React, { useEffect, useState, Suspense } from 'react';
 import Dashboardcard from './Dashboardcard';
 import Activitycard from './Activitycard';
 import Taskcard from './Taskcard';
+import "flatpickr/dist/themes/material_blue.css";
 
 const App = () => {
   const [activeTab, setActiveTab] = useState("Pending");
@@ -14,6 +15,9 @@ const App = () => {
   const [activityID, setActivityID] = useState(null);
   const [pendingTask, setPendingTask] = useState([]);
   const [completedTask, setCompletedTask] = useState([]);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [date, setDate] = useState(new Date());
 
   const areaFilter = (event) => {
     setAreaText(event.target.value);
@@ -43,7 +47,7 @@ const App = () => {
       }
     }
 
-    activityID ? fetchRecords():null;
+    activityID ? fetchRecords() : null;
   }, [activityID]);
 
   useEffect(() => {
@@ -150,7 +154,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className="container-fluid overflow-x-hidden">
+    <div className="container-fluid">
       <div className="row">
         <div className="bg-danger p-2">
           <div className="row">
@@ -173,9 +177,15 @@ const App = () => {
         {listType === false ? (
           <>
             <div className="p-2 bg-secondary-subtle">
-              <input type="text" className='form-control' onChange={areaFilter} placeholder='Search Area' />
+              <div className="d-flex gap-2">
+                <input type="text" className='form-control' onChange={areaFilter} placeholder='Search Area' />
+                <input type="date" className='form-control custom-date-input' value={startDate} onChange={e => setStartDate(e.target.value)} />
+                <input type="date" className='form-control custom-date-input' value={endDate} onChange={e => setEndDate(e.target.value)} />
+                
+              </div>
+
             </div>
-            <div className="activity-list bg-secondary-subtle overflow-x-hidden w-100" style={{ height: '265px' }}>
+            <div className="activity-list bg-secondary-subtle overflow-x-hidden w-100 overscroll-auto" style={{ height: '512px' }}>
               {
                 activeTab === "Pending" ?
                   (
@@ -241,7 +251,7 @@ const App = () => {
             </div>
           </>
         ) : (
-          <div className="task-list bg-secondary-subtle overflow-hidden" style={{ height: '47.5em' }}>
+          <div className="task-list bg-secondary-subtle overflow-x-hidden overflow-y-auto" style={{ height: '512px' }}>
             <div className="my-2">
               <div className="d-flex">
                 <input type="text" onChange={areaFilter} className='form-control' placeholder='Search Task Name' />
@@ -250,7 +260,7 @@ const App = () => {
             {activeTab === "Pending" ? (
               <div className={`card-list overflow-hidden h-100`}>
                 <div className='text-end p-2'><button className='btn btn-danger btn-sm shadow-sm' onClick={backToActivity}>Back</button></div>
-                <div className='overflow-y-auto overflow-x-hidden' style={{ height: '235px' }}>
+                <div className='overflow-y-auto overflow-x-hidden' >
                   {pendingTask
                     .filter(record => record.Task_Name.toLowerCase().includes(areaText.toLowerCase()))
                     .map((record, i) => (
@@ -266,7 +276,7 @@ const App = () => {
             ) : (
               <div className={`card-list overflow-hidden`}>
                 <div className='text-end p-2'><button className='btn btn-danger btn-sm shadow-sm' onClick={backToActivity}>Back</button></div>
-                <div className='overflow-y-auto overflow-x-hidden' style={{ height: '235px' }}>
+                <div className='overflow-y-auto overflow-x-hidden'>
                   {completedTask
                     .filter(record => record.Task_Name.toLowerCase().includes(areaText.toLowerCase()))
                     .map((record, i) => (
